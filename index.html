@@ -3,52 +3,138 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Travel Rentals & Blog</title>
+  <title>Travel Rentals & Unified Booking Platform</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <header>
-    <h1>Travel Rentals</h1>
+    <h1>🚗 Travel Rentals</h1>
     <nav id="navbar">
       <a href="index.html" class="active">Home</a>
-      <a href="blogs.html">Blogs</a>
+      <a href="flights.html">Flights</a>
+      <a href="hotels.html">Hotels</a>
       <a href="cars.html">Cars</a>
+      <a href="blogs.html">Blogs</a>
       <a href="contact.html">Contact</a>
     </nav>
   </header>
 
+  <!-- Hero Section -->
   <section class="hero">
-    <h2>Find Your Next Adventure 🚗</h2>
-    <p>Explore our blogs & rent the perfect car for your journey.</p>
-    <a href="cars.html" class="btn">Book a Car</a>
+    <h2>Find Your Next Adventure ✈️🏨🚗</h2>
+    <p>Explore our blogs & book flights, hotels, or rental cars all in one unified platform.</p>
+    <a href="flights.html" class="btn" style="margin-bottom: 20px;">Book a Journey Now</a>
   </section>
 
-  <section class="slider-section">
-  <h2>Our Travel Cars</h2>
-
-  <div class="slider-container">
-    <div class="slider">
-      <img src="cars/innova.avif" alt="Slide 1" />
-      <img src="cars/mahendra-xuv.jpg" alt="Slide 2" />
-      <img src="cars/maruti-ertiga.jpg" alt="Slide 3" />
-      <img src="cars/marutisuzuki-dzire.jpeg" alt="Slide 4" />
+  <!-- Integrated Quick Search tabs -->
+  <div class="search-panel">
+    <div class="search-tabs">
+      <button class="search-tab-btn active" onclick="switchSearchTab('flight')">✈️ Flights</button>
+      <button class="search-tab-btn" onclick="switchSearchTab('hotel')">🏨 Hotels</button>
+      <button class="search-tab-btn" onclick="switchSearchTab('car')">🚗 Cars</button>
     </div>
+    
+    <div class="search-tab-content">
+      <!-- Flight search tab -->
+      <div id="flight-search-pane" class="search-tab-pane active">
+        <form id="heroFlightSearch">
+          <div class="search-grid">
+            <div class="search-field">
+              <label for="h-from">From</label>
+              <input type="text" id="h-from" placeholder="Delhi (DEL)" required />
+            </div>
+            <div class="search-field">
+              <label for="h-to">To</label>
+              <input type="text" id="h-to" placeholder="Mumbai (BOM)" required />
+            </div>
+            <div class="search-field">
+              <label for="h-date">Departure Date</label>
+              <input type="date" id="h-date" required />
+            </div>
+          </div>
+          <button type="submit" class="search-submit-btn">Search Flight Itineraries 🔍</button>
+        </form>
+      </div>
 
-    <button class="prev">&#10094;</button>
-    <button class="next">&#10095;</button>
+      <!-- Hotel search tab -->
+      <div id="hotel-search-pane" class="search-tab-pane">
+        <form id="heroHotelSearch">
+          <div class="search-grid">
+            <div class="search-field">
+              <label for="h-dest">Destination</label>
+              <select id="h-dest">
+                <option value="Delhi">Delhi</option>
+                <option value="Goa">Goa</option>
+                <option value="Jaipur">Jaipur</option>
+                <option value="Kerala">Kerala</option>
+              </select>
+            </div>
+            <div class="search-field">
+              <label for="h-checkin">Check-In</label>
+              <input type="date" id="h-checkin" required />
+            </div>
+            <div class="search-field">
+              <label for="h-checkout">Check-Out</label>
+              <input type="date" id="h-checkout" required />
+            </div>
+          </div>
+          <button type="submit" class="search-submit-btn">Search Hotels & Rooms 🔍</button>
+        </form>
+      </div>
+
+      <!-- Car search tab -->
+      <div id="car-search-pane" class="search-tab-pane">
+        <form id="heroCarSearch">
+          <div class="search-grid">
+            <div class="search-field">
+              <label for="h-loc">Location</label>
+              <select id="h-loc">
+                <option value="Delhi">Delhi</option>
+                <option value="Mumbai">Mumbai</option>
+                <option value="Bangalore">Bangalore</option>
+                <option value="Goa">Goa</option>
+              </select>
+            </div>
+            <div class="search-field">
+              <label for="h-pickup">Pickup Date</label>
+              <input type="date" id="h-pickup" required />
+            </div>
+            <div class="search-field">
+              <label for="h-dropoff">Dropoff Date</label>
+              <input type="date" id="h-dropoff" required />
+            </div>
+          </div>
+          <button type="submit" class="search-submit-btn">Search Rental Vehicles 🔍</button>
+        </form>
+      </div>
+    </div>
   </div>
-</section>
 
+  <!-- Image Slider Section -->
+  <section class="slider-section">
+    <h2>Featured Fleet Inventory</h2>
+    <div class="slider-container">
+      <div class="slider">
+        <img src="cars/innova.avif" alt="Toyota Innova" />
+        <img src="cars/mahendra-xuv.jpg" alt="Mahindra XUV" />
+        <img src="cars/maruti-ertiga.jpg" alt="Maruti Ertiga" />
+        <img src="cars/marutisuzuki-dzire.jpeg" alt="Maruti Dzire" />
+      </div>
+      <button class="prev">&#10094;</button>
+      <button class="next">&#10095;</button>
+    </div>
+  </section>
+
+  <!-- About Section -->
   <section class="about">
     <h2>About Us</h2>
     <p>
-      Welcome to <strong>Travel Rentals</strong> – your one-stop destination for car rentals and travel stories.
-      We make your trips comfortable, memorable, and affordable.
+      Welcome to <strong>Travel Rentals</strong> – your premium, integrated portal for flight bookings, hotel reservations, and car rentals. We unify your complete travel booking pipeline to reduce research friction and offer seamless travel coordination.
     </p>
   </section>
 
   <footer>
-    <p>© 2025 Travel Rentals | Designed by Lokesh</p>
+    <p>© 2025 Travel Rentals | Designed by Lokesh & Dev Team</p>
   </footer>
 
   <!-- Floating WhatsApp Button -->
@@ -58,8 +144,68 @@
   </a>
 
   <!-- Floating Book Now Button -->
-  <a href="cars.html" class="book-now">Book Now</a>
+  <a href="flights.html" class="book-now">Book Now</a>
 
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
   <script src="js/script.js"></script>
+  <script>
+    // Tab switching inside hero search panel
+    function switchSearchTab(tab) {
+      document.querySelectorAll(".search-tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".search-tab-pane").forEach(pane => pane.classList.remove("active"));
+      
+      const activeBtn = Array.from(document.querySelectorAll(".search-tab-btn")).find(btn => btn.innerText.toLowerCase().includes(tab));
+      if (activeBtn) activeBtn.classList.add("active");
+      
+      document.getElementById(`${tab}-search-pane`).classList.add("active");
+    }
+
+    // Set default values for search dates
+    const todayStr = new Date().toISOString().split("T")[0];
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+    const dayAfter = new Date();
+    dayAfter.setDate(tomorrow.getDate() + 2);
+    const dayAfterStr = dayAfter.toISOString().split("T")[0];
+
+    document.getElementById("h-date").value = tomorrowStr;
+    document.getElementById("h-date").min = tomorrowStr;
+    document.getElementById("h-checkin").value = tomorrowStr;
+    document.getElementById("h-checkin").min = tomorrowStr;
+    document.getElementById("h-checkout").value = dayAfterStr;
+    document.getElementById("h-checkout").min = dayAfterStr;
+    document.getElementById("h-pickup").value = tomorrowStr;
+    document.getElementById("h-pickup").min = tomorrowStr;
+    document.getElementById("h-dropoff").value = dayAfterStr;
+    document.getElementById("h-dropoff").min = dayAfterStr;
+
+    // Search submissions coordination using sessionStorage
+    document.getElementById("heroFlightSearch").addEventListener("submit", (e) => {
+      e.preventDefault();
+      sessionStorage.setItem("search_flight_from", document.getElementById("h-from").value);
+      sessionStorage.setItem("search_flight_to", document.getElementById("h-to").value);
+      sessionStorage.setItem("search_flight_date", document.getElementById("h-date").value);
+      window.location.href = "flights.html";
+    });
+
+    document.getElementById("heroHotelSearch").addEventListener("submit", (e) => {
+      e.preventDefault();
+      sessionStorage.setItem("search_hotel_dest", document.getElementById("h-dest").value);
+      sessionStorage.setItem("search_hotel_checkin", document.getElementById("h-checkin").value);
+      sessionStorage.setItem("search_hotel_checkout", document.getElementById("h-checkout").value);
+      window.location.href = "hotels.html";
+    });
+
+    document.getElementById("heroCarSearch").addEventListener("submit", (e) => {
+      e.preventDefault();
+      sessionStorage.setItem("search_car_loc", document.getElementById("h-loc").value);
+      sessionStorage.setItem("search_car_pickup", document.getElementById("h-pickup").value);
+      sessionStorage.setItem("search_car_dropoff", document.getElementById("h-dropoff").value);
+      window.location.href = "cars.html";
+    });
+  </script>
 </body>
 </html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout | Travel Rentals</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>🚗 Travel Rentals</h1>
+    <nav id="navbar">
+      <a href="index.html">Home</a>
+      <a href="blogs.html">Blogs</a>
+      <a href="cars.html">Cars</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <div class="checkout-layout">
+    <!-- Cart Items and Payment details -->
+    <div>
+      <div class="checkout-section">
+        <h3>🛒 Booking Cart Summary</h3>
+        <div id="cart-items-container">
+          <!-- Dynamically filled -->
+        </div>
+      </div>
+
+      <!-- Secure Checkout Payment Form -->
+      <div class="checkout-section" id="payment-section">
+        <h3>💳 Secure Payment Portal</h3>
+        <div id="payment-content">
+          <!-- Loaded dynamically based on Auth status -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Summary Sidebar -->
+    <div class="summary-sidebar">
+      <h3 style="font-size:16px; margin-bottom:16px; border-bottom: 1px solid var(--border); padding-bottom:8px;">Booking Invoice</h3>
+      
+      <div id="invoice-breakdown-container">
+        <!-- Dynamically calculated -->
+      </div>
+      
+      <div class="summary-total">
+        <span>Grand Total</span>
+        <span id="grand-total-val">₹0</span>
+      </div>
+      
+      <button class="book-btn" style="width:100%; margin-top:20px; font-size:15px; height:45px;" id="sidebar-submit-btn" onclick="submitCheckoutForm()">Pay & Confirm Bundle</button>
+    </div>
+  </div>
+
+  <!-- Success Modal Overlay -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-content" style="text-align: center; padding: 40px 30px;">
+      <div style="font-size: 56px; color:#10b981; margin-bottom:16px;">🎉</div>
+      <h2 style="font-size:24px; margin-bottom:8px;">Booking Confirmed!</h2>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">
+        Your unified travel booking has been verified. A confirmation receipt has been compiled.
+      </p>
+      
+      <div style="background:#f8fafc; border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; margin-bottom:24px;">
+        <span style="font-size:12px; color:var(--text-muted); display:block; text-transform:uppercase; font-weight:600;">Transaction ID</span>
+        <span style="font-size:18px; font-weight:800; color:var(--primary-dark);" id="success-booking-id">TR-XXXXX</span>
+      </div>
+      
+      <div style="display:flex; justify-content:center; gap:12px;">
+        <a href="dashboard.html" class="book-btn" style="margin:0;">Go to Dashboard</a>
+        <a href="index.html" class="book-btn" style="background:#64748b; margin:0;">Home</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Travel Rentals | Integrated Booking Platform</p>
+  </footer>
+
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Global tally variables
+    let cart = null;
+    let totals = { subtotal: 0, tax: 0, grand: 0 };
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadCheckout();
+    });
+
+    function loadCheckout() {
+      cart = DB.getCart();
+      const itemsContainer = document.getElementById("cart-items-container");
+      const breakdownContainer = document.getElementById("invoice-breakdown-container");
+      const submitBtn = document.getElementById("sidebar-submit-btn");
+      
+      itemsContainer.innerHTML = "";
+      breakdownContainer.innerHTML = "";
+      
+      let cartEmpty = !cart.flight && !cart.hotel && !cart.car;
+      
+      if (cartEmpty) {
+        itemsContainer.innerHTML = `
+          <div style="text-align:center; padding: 30px 10px;">
+            <p style="color:var(--text-muted); font-size:14px; margin-bottom:14px;">Your booking cart is empty.</p>
+            <a href="index.html" class="book-btn" style="display:inline-block;">Browse Flights, Hotels & Cars</a>
+          </div>
+        `;
+        breakdownContainer.innerHTML = `<div style="color:var(--text-muted); font-size:13px;">No items added to cart.</div>`;
+        document.getElementById("grand-total-val").innerText = "₹0";
+        submitBtn.style.opacity = "0.5";
+        submitBtn.disabled = true;
+        
+        // Hide payment portal if cart empty
+        document.getElementById("payment-section").style.display = "none";
+        return;
+      }
+      
+      document.getElementById("payment-section").style.display = "block";
+      submitBtn.style.opacity = "1";
+      submitBtn.disabled = false;
+      
+      let subtotal = 0;
+      
+      // 1. Render Flight item
+      if (cart.flight) {
+        subtotal += cart.flight.price;
+        const div = document.createElement("div");
+        div.className = "checkout-item";
+        div.innerHTML = `
+          <div style="font-size:32px; width:70px; text-align:center;">✈️</div>
+          <div class="checkout-item-details">
+            <div class="checkout-item-title">${cart.flight.airline} Flight (${cart.flight.code})</div>
+            <div class="checkout-item-meta">${cart.flight.from} to ${cart.flight.to} (${cart.flight.date}) • ${cart.flight.seatClass} Class</div>
+            <div class="checkout-item-price">₹${cart.flight.price}</div>
+          </div>
+          <button class="remove-cart-item" onclick="removeItem('flight')">Remove</button>
+        `;
+        itemsContainer.appendChild(div);
+        
+        breakdownContainer.innerHTML += `
+          <div class="summary-row">
+            <span>Flight (${cart.flight.code})</span>
+            <span>₹${cart.flight.price}</span>
+          </div>
+        `;
+      }
+      
+      // 2. Render Hotel item
+      if (cart.hotel) {
+        subtotal += cart.hotel.price;
+        const div = document.createElement("div");
+        div.className = "checkout-item";
+        div.innerHTML = `
+          <div style="font-size:32px; width:70px; text-align:center;">🏨</div>
+          <div class="checkout-item-details">
+            <div class="checkout-item-title">${cart.hotel.name}</div>
+            <div class="checkout-item-meta">${cart.hotel.roomType} • ${cart.hotel.nights} Nights Stay (${cart.hotel.checkIn} to ${cart.hotel.checkOut})</div>
+            <div class="checkout-item-price">₹${cart.hotel.price} <span style="font-weight:normal; font-size:11px; color:var(--text-muted);">(${cart.hotel.nights}x ₹${cart.hotel.pricePerNight})</span></div>
+          </div>
+          <button class="remove-cart-item" onclick="removeItem('hotel')">Remove</button>
+        `;
+        itemsContainer.appendChild(div);
+        
+        breakdownContainer.innerHTML += `
+          <div class="summary-row">
+            <span>Hotel Stay (${cart.hotel.nights} nights)</span>
+            <span>₹${cart.hotel.price}</span>
+          </div>
+        `;
+      }
+      
+      // 3. Render Car item
+      if (cart.car) {
+        subtotal += cart.car.price;
+        const div = document.createElement("div");
+        div.className = "checkout-item";
+        div.innerHTML = `
+          <div style="font-size:32px; width:70px; text-align:center;">🚗</div>
+          <div class="checkout-item-details">
+            <div class="checkout-item-title">${cart.car.name}</div>
+            <div class="checkout-item-meta">Pickup: ${cart.car.location} • ${cart.car.days} Days Rental (${cart.car.pickupDate} to ${cart.car.dropoffDate})</div>
+            <div class="checkout-item-price">₹${cart.car.price} <span style="font-weight:normal; font-size:11px; color:var(--text-muted);">(${cart.car.days}x ₹${cart.car.pricePerDay})</span></div>
+          </div>
+          <button class="remove-cart-item" onclick="removeItem('car')">Remove</button>
+        `;
+        itemsContainer.appendChild(div);
+        
+        breakdownContainer.innerHTML += `
+          <div class="summary-row">
+            <span>Car Rental (${cart.car.days} days)</span>
+            <span>₹${cart.car.price}</span>
+          </div>
+        `;
+      }
+      
+      // Calculations
+      const tax = Math.round(subtotal * 0.18);
+      const grand = subtotal + tax;
+      
+      totals = { subtotal, tax, grand };
+      
+      breakdownContainer.innerHTML += `
+        <div class="summary-row" style="margin-top:16px; border-top: 1px solid var(--border); padding-top:12px;">
+          <span>Subtotal</span>
+          <span>₹${subtotal}</span>
+        </div>
+        <div class="summary-row" style="color:#059669;">
+          <span>SGST/CGST Taxes (18%)</span>
+          <span>₹${tax}</span>
+        </div>
+      `;
+      
+      document.getElementById("grand-total-val").innerText = `₹${grand}`;
+      
+      // Populate secure payment method container
+      loadPaymentPanel();
+    }
+
+    function removeItem(type) {
+      DB.removeFromCart(type);
+      loadCheckout();
+      updateNavbar();
+    }
+
+    // Payment Section Handler
+    function loadPaymentPanel() {
+      const container = document.getElementById("payment-content");
+      const user = Auth.getCurrentUser();
+      
+      if (!user) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 20px 10px;">
+            <p style="font-size:14px; color:var(--text-muted); margin-bottom:12px;">You must be logged in to access tokenized payment gateways.</p>
+            <a href="login.html" class="book-btn" style="display:inline-block;">Sign In / Create Account</a>
+          </div>
+        `;
+        return;
+      }
+      
+      const cards = Auth.getSavedCards();
+      
+      let cardOptionsHtml = "";
+      if (cards.length > 0) {
+        cardOptionsHtml = cards.map((c, i) => `
+          <label style="display:flex; align-items:center; gap:12px; padding:12px; border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:10px; cursor:pointer;">
+            <input type="radio" name="checkout-payment-card" value="${c.token}" ${i === 0 ? "checked" : ""} />
+            <div>
+              <strong style="font-size:14px;">${c.cardType} ending in ${c.last4}</strong>
+              <div style="font-size:11px; color:var(--text-muted);">Token: ${c.token} • Holder: ${c.cardHolder}</div>
+            </div>
+          </label>
+        `).join("");
+      }
+      
+      container.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          
+          ${cards.length > 0 ? `
+            <div>
+              <span style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:8px;">Saved Tokenized Cards</span>
+              ${cardOptionsHtml}
+            </div>
+          ` : ""}
+          
+          <label style="display:flex; align-items:center; gap:12px; margin-top:10px; cursor:pointer; font-weight:600; font-size:14px;">
+            <input type="radio" name="checkout-payment-card" id="pay-new-card-radio" value="new" ${cards.length === 0 ? "checked" : ""} onchange="toggleNewCardForm(this.checked)" />
+            💳 Pay with New Credit Card
+          </label>
+          
+          <form id="checkoutNewCardForm" style="display: ${cards.length === 0 ? "flex" : "none"}; border-top:1px dashed var(--border); padding-top:16px; margin-top:8px;">
+            <div class="form-group">
+              <label for="c-holder">Card Holder Name</label>
+              <input type="text" id="c-holder" placeholder="JOHN DOE" required />
+            </div>
+            <div class="form-group">
+              <label for="c-number">Card Number</label>
+              <input type="text" id="c-number" placeholder="4111 2222 3333 4444" required />
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div class="form-group">
+                <label for="c-exp">Expiry (MM/YY)</label>
+                <input type="text" id="c-exp" placeholder="12/28" required />
+              </div>
+              <div class="form-group">
+                <label for="c-cvv">CVV</label>
+                <input type="password" id="c-cvv" placeholder="•••" maxlength="3" required />
+              </div>
+            </div>
+            <label style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer; font-weight:500;">
+              <input type="checkbox" id="save-card-chk" /> Securely store and tokenise this payment card
+            </label>
+          </form>
+          
+        </div>
+      `;
+    }
+
+    function toggleNewCardForm(isChecked) {
+      const form = document.getElementById("checkoutNewCardForm");
+      if (form) {
+        form.style.display = isChecked ? "flex" : "none";
+      }
+    }
+
+    // Submit Checkout Payment Simulation
+    function submitCheckoutForm() {
+      const user = Auth.getCurrentUser();
+      if (!user) {
+        alert("Please log in to finalize booking transaction.");
+        return;
+      }
+      
+      const newCardRadio = document.getElementById("pay-new-card-radio");
+      
+      // If paying with a new card, validate its form manually
+      if (newCardRadio && newCardRadio.checked) {
+        const holder = document.getElementById("c-holder").value.trim();
+        const num = document.getElementById("c-number").value.trim();
+        const exp = document.getElementById("c-exp").value.trim();
+        const cvv = document.getElementById("c-cvv").value.trim();
+        
+        if (!holder || !num || !exp || !cvv) {
+          alert("Please complete the new card payment form inputs.");
+          return;
+        }
+        
+        // Save card if user checked the box
+        const saveCheck = document.getElementById("save-card-chk");
+        if (saveCheck && saveCheck.checked) {
+          Auth.saveCard(holder, num, exp, "Visa");
+        }
+      }
+      
+      // Display simulated loading state
+      const submitBtn = document.getElementById("sidebar-submit-btn");
+      submitBtn.innerText = "Securing transaction authorization...";
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = "0.7";
+      
+      setTimeout(() => {
+        // Create booking in database
+        const bookingData = {
+          userId: user.id,
+          totalPrice: totals.grand,
+          flight: cart.flight,
+          hotel: cart.hotel,
+          car: cart.car
+        };
+        
+        const confirmedBooking = DB.createBooking(bookingData);
+        
+        // Clear cart
+        DB.clearCart();
+        updateNavbar();
+        
+        // Open success modal
+        document.getElementById("success-booking-id").innerText = confirmedBooking.bookingId;
+        document.getElementById("successModal").style.display = "flex";
+        
+        submitBtn.innerText = "Transaction Settled ✓";
+      }, 1500);
+    }
+  </script>
+</body>
+</html>

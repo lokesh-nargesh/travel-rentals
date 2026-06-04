@@ -3,50 +3,302 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Car Rentals</title>
+  <title>Rental Cars | Travel Rentals</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <header>
-    <h1>Available Cars for Rent</h1>
+    <h1>🚗 Travel Rentals</h1>
     <nav id="navbar">
       <a href="index.html">Home</a>
-      <a href="blogs.html">Blogs</a>
+      <a href="flights.html">Flights</a>
+      <a href="hotels.html">Hotels</a>
       <a href="cars.html" class="active">Cars</a>
+      <a href="blogs.html">Blogs</a>
       <a href="contact.html">Contact</a>
     </nav>
   </header>
 
-  <section class="cars">
-    <div class="car-card">
-      <img src="cars/innova.avif" alt="Innova" />
-      <h3>Toyota Innova Crysta</h3>
-      <p>7-seater | ₹15/km | AC</p>
-      <a href="https://wa.me/9111442103?text=I%20want%20to%20book%20Toyota%20Innova" class="book-btn" target="_blank">Book via WhatsApp</a>
-    </div>
-
-    <div class="car-card">
-      <img src="cars/marutisuzuki-dzire.jpeg" alt="Swift" />
-      <h3>Maruti Dzire</h3>
-      <p>4-seater | ₹12/km | AC</p>
-      <a href="https://wa.me/9111442103?text=I%20want%20to%20book%20Maruti%20Swift" class="book-btn" target="_blank">Book via WhatsApp</a>
-    </div>
-
-    <div class="car-card">
-      <img src="cars/mahendra-xuv.jpg" alt="XUV" />
-      <h3>Mahindra XUV</h3>
-      <p>Luxury SUV | ₹20/km | AC</p>
-      <a href="https://wa.me/9111442103?text=I%20want%20to%20book%20Mahindra%20XUV" class="book-btn" target="_blank">Book via WhatsApp</a>
-    </div>
+  <!-- Hero Banner -->
+  <section class="hero" style="padding: 60px 24px; background: linear-gradient(rgba(15,23,42,0.5), rgba(15,23,42,0.75)), url('https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80') no-repeat center/cover;">
+    <h2>Rent a Perfect Car for the Ride 🚗</h2>
+    <p>Flexible daily rates, AC equipped, and well-maintained models.</p>
   </section>
 
+  <!-- Car Search Panel -->
+  <div class="search-panel" style="margin-top:-20px; max-width: 1200px;">
+    <div class="search-tab-content" style="border-radius: var(--radius-md);">
+      <form id="carSearchForm">
+        <div class="search-grid">
+          <div class="search-field">
+            <label for="car-location">Rental Location</label>
+            <select id="car-location" required>
+              <option value="Delhi">Delhi</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Bangalore">Bangalore</option>
+              <option value="Goa">Goa</option>
+              <option value="Jaipur">Jaipur</option>
+              <option value="Kerala">Kerala</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label for="car-pickup">Pickup Date</label>
+            <input type="date" id="car-pickup" required />
+          </div>
+          <div class="search-field">
+            <label for="car-dropoff">Dropoff Date</label>
+            <input type="date" id="car-dropoff" required />
+          </div>
+          <div class="search-field">
+            <label for="car-time">Pickup Time</label>
+            <input type="time" id="car-time" value="09:00" required />
+          </div>
+        </div>
+        <button type="submit" class="search-submit-btn">Search Cars 🔍</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="results-container">
+    <!-- Sidebar Filters -->
+    <div class="filters-sidebar">
+      <h3>Filter Vehicles</h3>
+      
+      <div class="filter-group">
+        <label for="filter-class">Vehicle Class</label>
+        <select id="filter-class" onchange="applyFilters()">
+          <option value="all">Any Class</option>
+          <option value="SUV">SUV</option>
+          <option value="Sedan">Sedan</option>
+          <option value="Hatchback">Hatchback</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-trans">Transmission</label>
+        <select id="filter-trans" onchange="applyFilters()">
+          <option value="all">Any Transmission</option>
+          <option value="Automatic">Automatic Only</option>
+          <option value="Manual">Manual Only</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-fuel">Fuel Type</label>
+        <select id="filter-fuel" onchange="applyFilters()">
+          <option value="all">Any Fuel</option>
+          <option value="Petrol">Petrol</option>
+          <option value="Diesel">Diesel</option>
+          <option value="Electric">Electric (EV)</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="sort-by">Sort By</label>
+        <select id="sort-by" onchange="applyFilters()">
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Listings Area -->
+    <div class="listings-grid" id="cars-list">
+      <!-- Dynamic list -->
+    </div>
+  </div>
+
   <footer>
-    <p>© 2025 Travel Rentals | Designed by Lokesh</p>
+    <p>© 2025 Travel Rentals | Integrated Booking Platform</p>
   </footer>
 
-  <a href="https://wa.me/9111442103?text=Hi!%20I%20want%20to%20book%20a%20car."
-     class="whatsapp-float" target="_blank">
+  <!-- WhatsApp Floating Button -->
+  <a href="https://wa.me/9111442103?text=Hi!%20I%20want%20to%20book%20a%20car." class="whatsapp-float" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp" />
   </a>
+
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Set default pickup/dropoff dates
+    const pickup = document.getElementById("car-pickup");
+    const dropoff = document.getElementById("car-dropoff");
+    
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+    const dayAfter = new Date();
+    dayAfter.setDate(today.getDate() + 3);
+    
+    pickup.value = tomorrow.toISOString().split("T")[0];
+    pickup.min = tomorrow.toISOString().split("T")[0];
+    dropoff.value = dayAfter.toISOString().split("T")[0];
+    dropoff.min = dayAfter.toISOString().split("T")[0];
+
+    // Align checkout min validation based on pickup changes
+    pickup.addEventListener("change", () => {
+      const minDate = new Date(pickup.value);
+      minDate.setDate(minDate.getDate() + 1);
+      dropoff.min = minDate.toISOString().split("T")[0];
+      if (new Date(dropoff.value) <= new Date(pickup.value)) {
+        dropoff.value = minDate.toISOString().split("T")[0];
+      }
+    });
+
+    let currentCarsList = [];
+    let currentSearch = null;
+
+    // Load initial listings
+    window.addEventListener("DOMContentLoaded", () => {
+      triggerSearch();
+    });
+
+    document.getElementById("carSearchForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      triggerSearch();
+    });
+
+    function triggerSearch() {
+      const loc = document.getElementById("car-location").value;
+      const pick = document.getElementById("car-pickup").value;
+      const drop = document.getElementById("car-dropoff").value;
+      const time = document.getElementById("car-time").value;
+      
+      currentSearch = { location: loc, pickupDate: pick, dropoffDate: drop, time };
+      
+      // Filter DB data matching location
+      currentCarsList = CARS_DATA.filter(c => c.locations.some(l => l.toLowerCase() === loc.toLowerCase()));
+      
+      applyFilters();
+    }
+
+    function applyFilters() {
+      if (!currentCarsList.length) {
+        renderCars([]);
+        return;
+      }
+      
+      const vClass = document.getElementById("filter-class").value;
+      const trans = document.getElementById("filter-trans").value;
+      const fuel = document.getElementById("filter-fuel").value;
+      const sortBy = document.getElementById("sort-by").value;
+      
+      let filtered = [...currentCarsList];
+      
+      // 1. Vehicle Class filter
+      if (vClass !== "all") {
+        filtered = filtered.filter(c => c.type === vClass);
+      }
+      
+      // 2. Transmission filter
+      if (trans !== "all") {
+        filtered = filtered.filter(c => c.transmission === trans);
+      }
+      
+      // 3. Fuel filter
+      if (fuel !== "all") {
+        filtered = filtered.filter(c => c.fuel === fuel);
+      }
+      
+      // 4. Sorting
+      if (sortBy === "price-asc") {
+        filtered.sort((a, b) => a.pricePerDay - b.pricePerDay);
+      } else {
+        filtered.sort((a, b) => b.pricePerDay - a.pricePerDay);
+      }
+      
+      renderCars(filtered);
+    }
+
+    function renderCars(cars) {
+      const container = document.getElementById("cars-list");
+      container.innerHTML = "";
+      
+      if (cars.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; background: var(--bg-card); border: 1px solid var(--border); padding: 40px; text-align: center; border-radius: var(--radius-md);">
+            <p style="color: var(--text-muted); font-size: 15px;">No vehicles found matching your criteria in this city.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      const days = getDaysDiff(currentSearch.pickupDate, currentSearch.dropoffDate);
+      
+      cars.forEach(c => {
+        const card = document.createElement("div");
+        card.className = "car-card";
+        
+        const total = c.pricePerDay * days;
+        
+        card.innerHTML = `
+          <img src="${c.image}" alt="${c.name}" />
+          <div class="card-content">
+            <h3 class="card-title">${c.name}</h3>
+            <p style="color:var(--text-muted); font-size:12px; margin-bottom:12px;">📍 Available in ${currentSearch.location}</p>
+            
+            <div class="card-meta">
+              <span class="meta-badge">${c.seats} Seater</span>
+              <span class="meta-badge">${c.transmission}</span>
+              <span class="meta-badge">${c.fuel}</span>
+              <span class="meta-badge">AC</span>
+            </div>
+            
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Rates: ₹${c.ratePerKm}/km base • Daily mileage limit applies</p>
+            
+            <div class="price-container">
+              <div>
+                <span class="price-label">Daily Base Rate</span>
+                <div class="price-value">₹${c.pricePerDay} <span style="font-size:11px; color:var(--text-muted); font-weight:normal;">/day</span></div>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:600; display:block;">Total (${days} days)</span>
+                <span style="font-weight:700; font-size:14px; color:var(--text-main);">₹${total}</span>
+              </div>
+            </div>
+            
+            <div style="display:grid; grid-template-columns:1fr 120px; gap:8px; margin-top:12px;">
+              <button class="book-btn" style="margin:0;" onclick="bookCar('${c.id}', ${total})">Book Vehicle</button>
+              <a href="https://wa.me/9111442103?text=Hi!%20I%20want%20to%20book%20a%20${encodeURIComponent(c.name)}%20in%20${encodeURIComponent(currentSearch.location)}%20from%20${currentSearch.pickupDate}%20to%20${currentSearch.dropoffDate}" 
+                 class="book-btn" style="margin:0; background:#25d366; display:flex; align-items:center; justify-content:center; gap:4px;" target="_blank">
+                WhatsApp
+              </a>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function bookCar(carId, totalPrice) {
+      const car = CARS_DATA.find(c => c.id === carId);
+      if (!car) return;
+      
+      const days = getDaysDiff(currentSearch.pickupDate, currentSearch.dropoffDate);
+      
+      const cartItem = {
+        id: car.id,
+        name: car.name,
+        location: currentSearch.location,
+        pickupDate: currentSearch.pickupDate,
+        dropoffDate: currentSearch.dropoffDate,
+        days,
+        pricePerDay: car.pricePerDay,
+        ratePerKm: car.ratePerKm,
+        fuel: car.fuel,
+        transmission: car.transmission,
+        price: totalPrice
+      };
+      
+      DB.addToCart("car", cartItem);
+      
+      if (confirm("Vehicle added to booking cart! Would you like to proceed to Checkout?")) {
+        window.location.href = "checkout.html";
+      } else {
+        updateNavbar();
+      }
+    }
+  </script>
 </body>
 </html>

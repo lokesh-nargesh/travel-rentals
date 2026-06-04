@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Flights | Travel Rentals</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>🚗 Travel Rentals</h1>
+    <nav id="navbar">
+      <a href="index.html">Home</a>
+      <a href="blogs.html">Blogs</a>
+      <a href="cars.html">Cars</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero Flight Banner -->
+  <section class="hero" style="padding: 60px 24px; background: linear-gradient(rgba(15,23,42,0.5), rgba(15,23,42,0.75)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=80') no-repeat center/cover;">
+    <h2>Search Flights Worldwide ✈️</h2>
+    <p>Find the best deals on commercial flight itineraries.</p>
+  </section>
+
+  <!-- Flight Search Form -->
+  <div class="search-panel" style="margin-top:-20px; max-width: 1200px;">
+    <div class="search-tab-content" style="border-radius: var(--radius-md);">
+      <form id="flightSearchForm">
+        <div class="search-grid">
+          <div class="search-field">
+            <label for="from-city">Origin City</label>
+            <input type="text" id="from-city" placeholder="Delhi (DEL)" required />
+          </div>
+          <div class="search-field">
+            <label for="to-city">Destination City</label>
+            <input type="text" id="to-city" placeholder="Mumbai (BOM)" required />
+          </div>
+          <div class="search-field">
+            <label for="dep-date">Departure Date</label>
+            <input type="date" id="dep-date" required />
+          </div>
+          <div class="search-field">
+            <label for="travel-class">Seat Class</label>
+            <select id="travel-class">
+              <option value="Economy">Economy</option>
+              <option value="Business">Business</option>
+              <option value="First">First Class</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="search-submit-btn">Search Flight Itineraries 🔍</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="results-container">
+    <!-- Sidebar Filters -->
+    <div class="filters-sidebar">
+      <h3>Refine Results</h3>
+      
+      <div class="filter-group">
+        <label for="filter-stops">Stops</label>
+        <select id="filter-stops" onchange="applyFilters()">
+          <option value="all">Any Stops</option>
+          <option value="Non-stop">Non-stop Only</option>
+          <option value="1 Stop">1 Stop Only</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-airline">Airlines</label>
+        <select id="filter-airline" onchange="applyFilters()">
+          <option value="all">All Carriers</option>
+          <option value="indigo">IndiGo</option>
+          <option value="air india">Air India</option>
+          <option value="vistara">Vistara</option>
+          <option value="spicejet">SpiceJet</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="sort-by">Sort By</label>
+        <select id="sort-by" onchange="applyFilters()">
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Listings Area -->
+    <div class="listings-container">
+      
+      <!-- Price Tracking Toggle -->
+      <div class="price-tracking-widget" id="price-tracking-container" style="display: none;">
+        <div class="tracking-info">
+          <h4>🔔 Track Flight Ticket Prices</h4>
+          <p id="tracking-text">Toggle to get browser alerts for price changes on this route.</p>
+        </div>
+        <div>
+          <label class="switch">
+            <input type="checkbox" id="tracking-toggle" onchange="togglePriceTracking(this)" />
+            <span class="slider-toggle"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="listings-list" id="flights-list">
+        <!-- Display search state or flight records -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 40px; text-align: center; border-radius: var(--radius-md);">
+          <p style="color: var(--text-muted); font-size: 15px;">Please enter origin and destination cities to load live flight departures.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Travel Rentals | Integrated Booking Platform</p>
+  </footer>
+
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Set default dates
+    const dateInput = document.getElementById("dep-date");
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    dateInput.value = tomorrow.toISOString().split("T")[0];
+    dateInput.min = tomorrow.toISOString().split("T")[0];
+
+    // Global variable containing raw searched flights
+    let activeFlightsList = [];
+    let currentSearchQuery = null;
+
+    // Trigger Search
+    document.getElementById("flightSearchForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const fromCity = document.getElementById("from-city").value.trim();
+      const toCity = document.getElementById("to-city").value.trim();
+      const depDate = document.getElementById("dep-date").value;
+      const seatClass = document.getElementById("travel-class").value;
+      
+      // Load flight results
+      activeFlightsList = getFlights(fromCity, toCity, depDate);
+      currentSearchQuery = { fromCity, toCity, date: depDate, seatClass };
+      
+      // Build Tracker widget status
+      setupTrackingWidget();
+      
+      applyFilters();
+    });
+
+    // Handle price tracker checkbox layout and bindings
+    function setupTrackingWidget() {
+      const widget = document.getElementById("price-tracking-container");
+      const toggle = document.getElementById("tracking-toggle");
+      const trackingText = document.getElementById("tracking-text");
+      
+      widget.style.display = "flex";
+      trackingText.innerText = `Track prices for ${currentSearchQuery.fromCity.toUpperCase()} to ${currentSearchQuery.toCity.toUpperCase()} (${currentSearchQuery.seatClass})`;
+      
+      const user = Auth.getCurrentUser();
+      if (!user) {
+        toggle.checked = false;
+        return;
+      }
+      
+      // Check if alert already exists in user settings
+      const alerts = DB.getPriceAlerts(user.id);
+      const label = `${currentSearchQuery.fromCity.toUpperCase()} to ${currentSearchQuery.toCity.toUpperCase()} (${currentSearchQuery.seatClass})`;
+      const exists = alerts.some(a => a.search === label);
+      toggle.checked = exists;
+    }
+
+    function togglePriceTracking(checkbox) {
+      const user = Auth.getCurrentUser();
+      if (!user) {
+        alert("Please log in to register price alert monitoring on this route.");
+        checkbox.checked = false;
+        window.location.href = "login.html";
+        return;
+      }
+      
+      const label = `${currentSearchQuery.fromCity.toUpperCase()} to ${currentSearchQuery.toCity.toUpperCase()} (${currentSearchQuery.seatClass})`;
+      
+      if (checkbox.checked) {
+        // Find cheapest flight price for search reference
+        const prices = activeFlightsList.map(f => f.prices[currentSearchQuery.seatClass]);
+        const minPrice = Math.min(...prices) || 4500;
+        
+        DB.addPriceAlert(user.id, label, minPrice);
+        alert(`Price tracker activated! You will receive random price fluctuations notifications.`);
+      } else {
+        const alerts = DB.getPriceAlerts(user.id);
+        const target = alerts.find(a => a.search === label);
+        if (target) {
+          DB.removePriceAlert(target.id);
+          alert("Price tracker deactivated.");
+        }
+      }
+    }
+
+    // Apply Sorting/Filtering
+    function applyFilters() {
+      if (!activeFlightsList.length) return;
+      
+      const stopsVal = document.getElementById("filter-stops").value;
+      const carrierVal = document.getElementById("filter-airline").value;
+      const sortVal = document.getElementById("sort-by").value;
+      const seatClass = currentSearchQuery ? currentSearchQuery.seatClass : "Economy";
+      
+      let filtered = [...activeFlightsList];
+      
+      // 1. Stops filter
+      if (stopsVal !== "all") {
+        filtered = filtered.filter(f => f.stops.toLowerCase().includes(stopsVal.toLowerCase()));
+      }
+      
+      // 2. Carrier filter
+      if (carrierVal !== "all") {
+        filtered = filtered.filter(f => f.airline.toLowerCase().includes(carrierVal));
+      }
+      
+      // 3. Sorting
+      if (sortVal === "price-asc") {
+        filtered.sort((a, b) => a.prices[seatClass] - b.prices[seatClass]);
+      } else {
+        filtered.sort((a, b) => b.prices[seatClass] - a.prices[seatClass]);
+      }
+      
+      renderFlights(filtered);
+    }
+
+    function renderFlights(flights) {
+      const list = document.getElementById("flights-list");
+      list.innerHTML = "";
+      
+      if (flights.length === 0) {
+        list.innerHTML = `
+          <div style="background: var(--bg-card); border: 1px solid var(--border); padding: 40px; text-align: center; border-radius: var(--radius-md);">
+            <p style="color: var(--text-muted); font-size: 15px;">No flight departures found matching your filter selection.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      const seatClass = currentSearchQuery.seatClass;
+      
+      flights.forEach(f => {
+        const card = document.createElement("div");
+        card.className = "flight-card";
+        
+        const price = f.prices[seatClass];
+        const statusClass = f.status.includes("Delayed") ? "status-delayed" : "status-ontime";
+        
+        card.innerHTML = `
+          <div class="flight-info">
+            <div class="flight-logo-code">
+              <span class="flight-logo">${f.logo}</span>
+              <span class="flight-code">${f.code}</span>
+            </div>
+            
+            <div class="flight-time-box">
+              <span class="flight-time">${f.departure}</span>
+              <span class="flight-airport">${f.from}</span>
+            </div>
+            
+            <div class="flight-duration-box">
+              <span class="flight-duration">${f.duration}</span>
+              <div class="flight-stops-line">
+                <span class="flight-stops-dot"></span>
+              </div>
+              <span class="flight-stops">${f.stops}</span>
+            </div>
+            
+            <div class="flight-time-box">
+              <span class="flight-time">${f.arrival}</span>
+              <span class="flight-airport">${f.to}</span>
+            </div>
+            
+            <div>
+              <div style="font-weight: 700; font-size:14px; margin-bottom: 4px;">${f.airline}</div>
+              <span class="flight-status-badge ${statusClass}">${f.status}</span>
+            </div>
+          </div>
+          
+          <div class="flight-action-box">
+            <div class="price-label">Price (${seatClass})</div>
+            <div class="price-value">₹${price}</div>
+            <button class="book-btn" style="margin-top:8px; width:100%;" onclick="bookFlight('${f.id}', ${price})">Select Flight</button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function bookFlight(flightId, price) {
+      const flight = activeFlightsList.find(f => f.id === flightId);
+      if (!flight) return;
+      
+      // Store checkout structure in cart
+      const cartItem = {
+        id: flight.id,
+        airline: flight.airline,
+        code: flight.code,
+        logo: flight.logo,
+        from: flight.from,
+        to: flight.to,
+        departure: flight.departure,
+        arrival: flight.arrival,
+        seatClass: currentSearchQuery.seatClass,
+        date: currentSearchQuery.date,
+        price
+      };
+      
+      DB.addToCart("flight", cartItem);
+      
+      // Alert user & ask to redirect to Checkout
+      if (confirm("Flight added to booking cart! Would you like to proceed to Checkout now?")) {
+        window.location.href = "checkout.html";
+      } else {
+        updateNavbar();
+      }
+    }
+  </script>
+</body>
+</html>

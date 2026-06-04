@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Hotels | Travel Rentals</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>🚗 Travel Rentals</h1>
+    <nav id="navbar">
+      <a href="index.html">Home</a>
+      <a href="blogs.html">Blogs</a>
+      <a href="cars.html">Cars</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="hero" style="padding: 60px 24px; background: linear-gradient(rgba(15,23,42,0.55), rgba(15,23,42,0.85)), url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80') no-repeat center/cover;">
+    <h2>Find Hotels & Stays 🏨</h2>
+    <p>Discover verified hotel deals with premium amenities.</p>
+  </section>
+
+  <!-- Hotel Search Form -->
+  <div class="search-panel" style="margin-top:-20px; max-width: 1200px;">
+    <div class="search-tab-content" style="border-radius: var(--radius-md);">
+      <form id="hotelSearchForm">
+        <div class="search-grid">
+          <div class="search-field">
+            <label for="hotel-destination">Destination City</label>
+            <select id="hotel-destination" required>
+              <option value="Delhi">Delhi</option>
+              <option value="Goa">Goa</option>
+              <option value="Jaipur">Jaipur</option>
+              <option value="Kerala">Kerala</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label for="checkin-date">Check-In Date</label>
+            <input type="date" id="checkin-date" required />
+          </div>
+          <div class="search-field">
+            <label for="checkout-date">Check-Out Date</label>
+            <input type="date" id="checkout-date" required />
+          </div>
+          <div class="search-field">
+            <label for="hotel-guests">Number of Guests</label>
+            <input type="number" id="hotel-guests" min="1" max="10" value="2" required />
+          </div>
+        </div>
+        <button type="submit" class="search-submit-btn">Search Stays 🔍</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="results-container">
+    <!-- Sidebar Filters -->
+    <div class="filters-sidebar">
+      <h3>Filter Hotels</h3>
+      
+      <div class="filter-group">
+        <label for="filter-stars">Star Rating</label>
+        <select id="filter-stars" onchange="applyFilters()">
+          <option value="all">Any Rating</option>
+          <option value="5">5 Star Only</option>
+          <option value="4">4 Star & Above</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Amenities</label>
+        <div style="display:flex; flex-direction:column; gap:8px; font-size:13px; margin-top:8px;">
+          <label style="display:flex; align-items:center; gap:8px; font-weight:normal;">
+            <input type="checkbox" class="amenity-chk" value="Pool" onchange="applyFilters()" /> Swimming Pool
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; font-weight:normal;">
+            <input type="checkbox" class="amenity-chk" value="Gym" onchange="applyFilters()" /> Fitness Gym
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; font-weight:normal;">
+            <input type="checkbox" class="amenity-chk" value="Spa" onchange="applyFilters()" /> Ayurveda Spa
+          </label>
+          <label style="display:flex; align-items:center; gap:8px; font-weight:normal;">
+            <input type="checkbox" class="amenity-chk" value="Beach Access" onchange="applyFilters()" /> Beach Access
+          </label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label for="sort-by">Sort By</label>
+        <select id="sort-by" onchange="applyFilters()">
+          <option value="rating-desc">Guest Rating: High to Low</option>
+          <option value="name-asc">Alphabetical (A-Z)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Listings Area -->
+    <div class="listings-grid" id="hotels-list">
+      <!-- Dynamically rendered -->
+    </div>
+  </div>
+
+  <!-- Rooms Selector Modal Overlay -->
+  <div class="modal-overlay" id="roomsModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeRoomsModal()">✕</button>
+      <h3 style="font-size: 20px; margin-bottom: 6px;" id="modal-hotel-title">Select Room Type</h3>
+      <p style="color:var(--text-muted); font-size:13px; margin-bottom: 20px;" id="modal-hotel-meta"></p>
+      
+      <div id="modal-rooms-container" style="display:flex; flex-direction:column; gap:16px;">
+        <!-- Rooms list injected here -->
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Travel Rentals | Integrated Booking Platform</p>
+  </footer>
+
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Set default check-in/out dates
+    const checkin = document.getElementById("checkin-date");
+    const checkout = document.getElementById("checkout-date");
+    
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+    const dayAfter = new Date();
+    dayAfter.setDate(today.getDate() + 3);
+    
+    checkin.value = tomorrow.toISOString().split("T")[0];
+    checkin.min = tomorrow.toISOString().split("T")[0];
+    checkout.value = dayAfter.toISOString().split("T")[0];
+    checkout.min = dayAfter.toISOString().split("T")[0];
+
+    // Align checkout min validation based on checkin changes
+    checkin.addEventListener("change", () => {
+      const minDate = new Date(checkin.value);
+      minDate.setDate(minDate.getDate() + 1);
+      checkout.min = minDate.toISOString().split("T")[0];
+      if (new Date(checkout.value) <= new Date(checkin.value)) {
+        checkout.value = minDate.toISOString().split("T")[0];
+      }
+    });
+
+    let currentHotelsList = [];
+    let currentSearch = null;
+    let selectedHotelForRoom = null;
+
+    // Load initial listings matching first destination
+    window.addEventListener("DOMContentLoaded", () => {
+      triggerSearch();
+    });
+
+    document.getElementById("hotelSearchForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      triggerSearch();
+    });
+
+    function triggerSearch() {
+      const dest = document.getElementById("hotel-destination").value;
+      const ci = document.getElementById("checkin-date").value;
+      const co = document.getElementById("checkout-date").value;
+      const guests = parseInt(document.getElementById("hotel-guests").value);
+      
+      currentSearch = { destination: dest, checkIn: ci, checkOut: co, guests };
+      
+      // Filter DB data matching destination
+      currentHotelsList = HOTELS_DATA.filter(h => h.location.toLowerCase() === dest.toLowerCase());
+      
+      applyFilters();
+    }
+
+    function applyFilters() {
+      if (!currentHotelsList.length) {
+        renderHotels([]);
+        return;
+      }
+      
+      const stars = document.getElementById("filter-stars").value;
+      const sortBy = document.getElementById("sort-by").value;
+      
+      // Collect selected amenities
+      const checkboxes = document.querySelectorAll(".amenity-chk:checked");
+      const selectedAmenities = Array.from(checkboxes).map(c => c.value);
+      
+      let filtered = [...currentHotelsList];
+      
+      // 1. Stars Rating filter
+      if (stars !== "all") {
+        const minStars = parseInt(stars);
+        filtered = filtered.filter(h => h.stars >= minStars);
+      }
+      
+      // 2. Amenities check filter (must have all checked amenities)
+      if (selectedAmenities.length > 0) {
+        filtered = filtered.filter(h => 
+          selectedAmenities.every(a => h.amenities.includes(a))
+        );
+      }
+      
+      // 3. Sorting
+      if (sortBy === "rating-desc") {
+        filtered.sort((a, b) => b.rating - a.rating);
+      } else if (sortBy === "name-asc") {
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+      }
+      
+      renderHotels(filtered);
+    }
+
+    function renderHotels(hotels) {
+      const container = document.getElementById("hotels-list");
+      container.innerHTML = "";
+      
+      if (hotels.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; background: var(--bg-card); border: 1px solid var(--border); padding: 40px; text-align: center; border-radius: var(--radius-md);">
+            <p style="color: var(--text-muted); font-size: 15px;">No hotels found matching your search and filter criteria.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      hotels.forEach(h => {
+        const card = document.createElement("div");
+        card.className = "hotel-card";
+        
+        let starsHtml = "";
+        for (let i = 0; i < h.stars; i++) starsHtml += "★";
+        
+        let amenityBadges = h.amenities.slice(0, 3).map(a => `<span class="amenity-badge">${a}</span>`).join("");
+        
+        // Find minimum room price
+        const minPrice = Math.min(...h.roomTypes.map(r => r.price));
+        
+        card.innerHTML = `
+          <img src="${h.image}" alt="${h.name}" />
+          <div class="card-content">
+            <div class="rating-stars">${starsHtml} <span class="rating-text">(${h.rating} / 5 • ${h.reviewsCount} reviews)</span></div>
+            <h3 class="card-title">${h.name}</h3>
+            <p style="color:var(--text-muted); font-size:13px; margin-bottom:10px;">📍 ${h.location}</p>
+            
+            <div class="amenity-list">
+              ${amenityBadges}
+              ${h.amenities.length > 3 ? `<span class="amenity-badge">+${h.amenities.length - 3} more</span>` : ""}
+            </div>
+            
+            <div class="price-container">
+              <div>
+                <span class="price-label">Rooms Starting At</span>
+                <div class="price-value">₹${minPrice} <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">/night</span></div>
+              </div>
+            </div>
+            <button class="book-btn" onclick="openRoomsModal('${h.id}')">View Rooms & Offers</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Rooms Selection Modal triggers
+    function openRoomsModal(hotelId) {
+      const hotel = HOTELS_DATA.find(h => h.id === hotelId);
+      if (!hotel) return;
+      
+      selectedHotelForRoom = hotel;
+      
+      document.getElementById("modal-hotel-title").innerText = hotel.name;
+      
+      const nights = getDaysDiff(currentSearch.checkIn, currentSearch.checkOut);
+      document.getElementById("modal-hotel-meta").innerText = `📍 ${hotel.location} • Staying for ${nights} Nights (${currentSearch.checkIn} to ${currentSearch.checkOut}) • ${currentSearch.guests} Guests`;
+      
+      const container = document.getElementById("modal-rooms-container");
+      container.innerHTML = "";
+      
+      hotel.roomTypes.forEach(r => {
+        const item = document.createElement("div");
+        item.style.padding = "16px";
+        item.style.border = "1px solid var(--border)";
+        item.style.borderRadius = "var(--radius-sm)";
+        item.style.display = "flex";
+        item.style.justifyContent = "space-between";
+        item.style.alignItems = "center";
+        item.style.gap = "16px";
+        
+        item.innerHTML = `
+          <div>
+            <div style="font-weight:700; font-size:15px; margin-bottom:4px;">${r.type}</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">${r.description}</div>
+            <div style="font-size:12px; font-weight:600; color:#16a34a;">✓ Free Cancellation available</div>
+          </div>
+          <div style="text-align:right; flex-shrink:0;">
+            <div style="font-size:18px; font-weight:800; color:var(--primary-dark);">₹${r.price} <span style="font-size:11px; font-weight:normal; color:var(--text-muted);">/night</span></div>
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">Total: ₹${r.price * nights}</div>
+            <button class="book-btn" style="margin:0; font-size:12px; padding:6px 12px;" onclick="bookRoom('${r.type}', ${r.price})">Select</button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+      
+      document.getElementById("roomsModal").style.display = "flex";
+    }
+
+    function closeRoomsModal() {
+      document.getElementById("roomsModal").style.display = "none";
+    }
+
+    function bookRoom(roomType, pricePerNight) {
+      if (!selectedHotelForRoom) return;
+      
+      const nights = getDaysDiff(currentSearch.checkIn, currentSearch.checkOut);
+      const totalPrice = pricePerNight * nights;
+      
+      const cartItem = {
+        id: selectedHotelForRoom.id,
+        name: selectedHotelForRoom.name,
+        location: selectedHotelForRoom.location,
+        checkIn: currentSearch.checkIn,
+        checkOut: currentSearch.checkOut,
+        nights,
+        guests: currentSearch.guests,
+        roomType,
+        pricePerNight,
+        price: totalPrice,
+        amenities: selectedHotelForRoom.amenities
+      };
+      
+      DB.addToCart("hotel", cartItem);
+      
+      closeRoomsModal();
+      
+      if (confirm("Accommodation added to booking cart! Would you like to proceed to Checkout?")) {
+        window.location.href = "checkout.html";
+      } else {
+        updateNavbar();
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login & Sign Up | Travel Rentals</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>🚗 Travel Rentals</h1>
+    <nav id="navbar">
+      <a href="index.html">Home</a>
+      <a href="blogs.html">Blogs</a>
+      <a href="cars.html">Cars</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <div class="auth-box">
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" onclick="switchAuthTab('login')">Login</button>
+      <button class="auth-tab-btn" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- Login Panel -->
+    <div id="login-panel" class="auth-panel">
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" required placeholder="you@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required placeholder="••••••••" />
+        </div>
+        <div style="text-align: right; margin-top: -6px;">
+          <a href="#" style="font-size: 12px; color: var(--primary); text-decoration: none;" onclick="switchAuthTab('recover')">Forgot password?</a>
+        </div>
+        <button type="submit" class="book-btn">Log In</button>
+      </form>
+    </div>
+
+    <!-- Signup Panel -->
+    <div id="signup-panel" class="auth-panel" style="display: none;">
+      <form id="signupForm">
+        <div class="form-group">
+          <label for="signup-name">Full Name</label>
+          <input type="text" id="signup-name" required placeholder="John Doe" />
+        </div>
+        <div class="form-group">
+          <label for="signup-email">Email Address</label>
+          <input type="email" id="signup-email" required placeholder="john@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" required minlength="6" placeholder="At least 6 characters" />
+        </div>
+        <button type="submit" class="book-btn">Create Account</button>
+      </form>
+    </div>
+
+    <!-- Recovery Panel -->
+    <div id="recover-panel" class="auth-panel" style="display: none;">
+      <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--text-main);">Password Recovery</h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+        Enter your email address and we'll send a password recovery voucher code to your inbox (simulated).
+      </p>
+      <form id="recoverForm">
+        <div class="form-group">
+          <label for="recover-email">Email Address</label>
+          <input type="email" id="recover-email" required placeholder="you@example.com" />
+        </div>
+        <button type="submit" class="book-btn">Request Recovery Code</button>
+        <button type="button" class="book-btn" style="background: #e2e8f0; color: var(--text-main); margin-top: 4px;" onclick="switchAuthTab('login')">Back to Login</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Travel Rentals | Integrated Booking Platform</p>
+  </footer>
+
+  <script src="js/db.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Tab switching logic
+    function switchAuthTab(tab) {
+      const tabs = document.querySelectorAll(".auth-tab-btn");
+      const panels = document.querySelectorAll(".auth-panel");
+      
+      panels.forEach(p => p.style.display = "none");
+      tabs.forEach(t => t.classList.remove("active"));
+      
+      if (tab === 'login') {
+        document.getElementById("login-panel").style.display = "block";
+        tabs[0].classList.add("active");
+      } else if (tab === 'signup') {
+        document.getElementById("signup-panel").style.display = "block";
+        tabs[1].classList.add("active");
+      } else if (tab === 'recover') {
+        document.getElementById("recover-panel").style.display = "block";
+      }
+    }
+
+    // Handles submissions
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value;
+      const pass = document.getElementById("login-password").value;
+      
+      const res = Auth.login(email, pass);
+      if (res.success) {
+        alert("Logged in successfully! Welcome back, " + res.user.name);
+        window.location.href = "index.html";
+      } else {
+        alert(res.message);
+      }
+    });
+
+    document.getElementById("signupForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("signup-name").value;
+      const email = document.getElementById("signup-email").value;
+      const pass = document.getElementById("signup-password").value;
+      
+      const res = Auth.register(name, email, pass);
+      if (res.success) {
+        alert("Account created successfully! Welcome, " + name);
+        window.location.href = "index.html";
+      } else {
+        alert(res.message);
+      }
+    });
+
+    document.getElementById("recoverForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = document.getElementById("recover-email").value;
+      alert("A password recovery link has been simulated for " + email + ". (In a production environment, this triggers an SMTP request).");
+      switchAuthTab('login');
+    });
+
+    // Check if user is already logged in, redirect to dashboard if so
+    if (Auth.getCurrentUser()) {
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</body>
+</html>
