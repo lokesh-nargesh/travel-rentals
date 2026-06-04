@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Rentals: Project Report</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman&family=Inter:wght@400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 12pt;
+      line-height: 1.6;
+      color: #111;
+      margin: 0;
+      padding: 0;
+      background-color: #fff;
+    }
+    
+    .page {
+      width: 8.5in;
+      min-height: 11in;
+      padding: 1in;
+      margin: 0 auto;
+      background: white;
+      box-sizing: border-box;
+      position: relative;
+    }
+    
+    /* Cover Page styling */
+    .cover-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 9in;
+      text-align: center;
+      padding-top: 1in;
+      page-break-after: always;
+    }
+    
+    .title-banner {
+      margin-top: 1.5in;
+    }
+    
+    .title-banner h1 {
+      font-size: 32pt;
+      font-weight: bold;
+      color: #0f172a;
+      margin: 0 0 10px;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .title-banner h2 {
+      font-size: 18pt;
+      font-weight: normal;
+      color: #475569;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .author-info {
+      margin-bottom: 2in;
+      font-size: 14pt;
+      color: #334155;
+    }
+    
+    /* Document elements */
+    h1, h2, h3, h4 {
+      font-family: 'Inter', sans-serif;
+      color: #0f172a;
+      page-break-after: avoid;
+    }
+    
+    h1 {
+      font-size: 18pt;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 5px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+    
+    h2 {
+      font-size: 14pt;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    
+    h3 {
+      font-size: 12pt;
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+    
+    p {
+      text-indent: 0.5in;
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+    
+    ul, ol {
+      margin-left: 0.5in;
+      margin-bottom: 15px;
+    }
+    
+    li {
+      margin-bottom: 6px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 11pt;
+    }
+    
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 10px;
+      text-align: left;
+    }
+    
+    th {
+      background-color: #f8fafc;
+      font-weight: bold;
+    }
+    
+    /* Diagram container */
+    .diagram-container {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      page-break-inside: avoid;
+    }
+    
+    .page-break {
+      page-break-after: always;
+    }
+    
+    code {
+      font-family: monospace;
+      font-size: 10pt;
+      background: #f1f5f9;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    
+    pre {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: monospace;
+      font-size: 9.5pt;
+      margin: 20px 0;
+    }
+    
+    /* Screen styling helper */
+    @media screen {
+      body {
+        background-color: #f1f5f9;
+        padding: 40px 0;
+      }
+      .page {
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        margin-bottom: 40px;
+      }
+    }
+    
+    @media print {
+      body {
+        background: white;
+      }
+      .page {
+        width: 100%;
+        height: auto;
+        padding: 0;
+        margin: 0;
+      }
+      .cover-page {
+        height: 100vh;
+      }
+    }
+  </style>
+  <!-- Load Mermaid Diagrams Library -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      securityLevel: 'loose'
+    });
+  </script>
+</head>
+<body>
+
+  <!-- PAGE 1: COVER PAGE -->
+  <div class="page">
+    <div class="cover-page">
+      <div class="title-banner">
+        <h1>Travel Rentals</h1>
+        <h2>Integrated Travel Booking Platform</h2>
+        <div style="font-size:14pt; margin-top:20px; color:#64748b;">Academic Project Design Report</div>
+      </div>
+      
+      <div class="author-info">
+        <strong>Prepared by:</strong><br>
+        Project Development Team<br>
+        Lokesh Nargesh & Co.<br><br>
+        <strong>Date:</strong><br>
+        November 2025
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: TABLE OF CONTENTS -->
+  <div class="page">
+    <h1 style="text-align: center; border-bottom: none; margin-top: 1in;">Table of Contents</h1>
+    <div style="margin: 50px auto 0; max-width: 500px; font-size:13pt; line-height:2.2;">
+      <div style="display:flex; justify-content:space-between;"><span>1. Introduction</span> <span>3</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>1.1 Project Overview</span> <span>3</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>1.2 Scope and Objectives</span> <span>3</span></div>
+      <div style="display:flex; justify-content:space-between;"><span>2. System Analysis and Requirements</span> <span>4</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>2.1 Functional Requirements (FR)</span> <span>4</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>2.2 Non-Functional Requirements (NFR)</span> <span>5</span></div>
+      <div style="display:flex; justify-content:space-between;"><span>3. System Architecture and Design</span> <span>6</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>3.1 Logical Architecture Model</span> <span>6</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>3.2 Technology Stack</span> <span>6</span></div>
+      <div style="display:flex; justify-content:space-between;"><span>4. Database Design and Data Modeling</span> <span>7</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>4.1 ER Diagram</span> <span>7</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>4.2 Schema Structures</span> <span>8</span></div>
+      <div style="display:flex; justify-content:space-between;"><span>5. Detailed System Diagrams (UML)</span> <span>9</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>5.1 Use Case Diagram</span> <span>9</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>5.2 Data Flow Diagram (DFD)</span> <span>10</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>5.3 Sequence Diagram</span> <span>11</span></div>
+      <div style="display:flex; justify-content:space-between;"><span>6. Implementation & Quality Assurance</span> <span>12</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>6.1 File Architecture</span> <span>12</span></div>
+      <div style="display:flex; justify-content:space-between; padding-left: 20px;"><span>6.2 Testing Matrix</span> <span>12</span></div>
+    </div>
+    <div class="page-break"></div>
+  </div>
+
+  <!-- PAGE 3: INTRODUCTION -->
+  <div class="page">
+    <h1>1. Introduction</h1>
+    
+    <h2>1.1 Project Overview</h2>
+    <p>The Travel Rentals platform is developed as a comprehensive solution to the fragmented nature of the online travel booking industry. The project’s central goal is to unify the distinct processes of securing car rentals, hotel accommodation, and flight tickets into a single, intuitive, and highly efficient user interface. This holistic approach significantly enhances the travel planning experience by reducing research time and minimizing the risk of booking discrepancies across different systems.</p>
+    
+    <h3>1.1.1 Problem Statement</h3>
+    <p>The current digital landscape for travel planning is characterized by significant inefficiency. Travelers are routinely required to visit three or more distinct vendor or aggregator websites—one for flights, one for hotels, and one for cars. This leads to high cognitive load because users must manage multiple tabs, interfaces, and price comparisons simultaneously. Additionally, personal details must be entered repeatedly across different platforms. Finally, the lack of integration makes it difficult to easily bundle or cross-reference bookings, which often leads to suboptimal travel arrangements (e.g., booking a flight that arrives too late for a car rental pick-up).</p>
+    
+    <h3>1.1.2 Proposed Solution</h3>
+    <p>Travel Rentals offers a dedicated, single point of access for all primary travel needs. The system utilizes modern web technologies and robust data aggregation to present a clear, unified view of available options, ensuring transparency and ease of use. The solution is inherently user-centric, prioritizing fast load times, mobile responsiveness, and an engaging booking flow.</p>
+    
+    <h2>1.2 Scope and Objectives</h2>
+    <p>The initial scope of the Travel Rentals platform focuses on the core functionality of booking car rentals, hotel reservations, and commercial airline tickets. Out of scope for the current iteration are ancillary services such as travel insurance, activity bookings, cruise line reservations, and multi-modal public transit planning. The primary objectives are to develop and deploy a fully functional MVP with clean, responsive front-end pages, implement cohesive cart coordination, and secure payment simulation through tokenization.</p>
+    
+    <div class="page-break"></div>
+  </div>
+
+  <!-- PAGE 4: REQUIREMENTS -->
+  <div class="page">
+    <h1>2. System Analysis and Requirements</h1>
+    
+    <h2>2.1 Functional Requirements (FR)</h2>
+    
+    <h3>2.1.1 FR 1: User Management</h3>
+    <ul>
+      <li><strong>FR 1.1:</strong> The system shall allow users to register and create a profile.</li>
+      <li><strong>FR 1.2:</strong> The system shall provide features for profile updates (name, email) and password modification.</li>
+      <li><strong>FR 1.3:</strong> The system shall store payment methods securely using credit card tokenization simulation.</li>
+    </ul>
+
+    <h3>2.1.2 FR 2: Car Rental Module</h3>
+    <ul>
+      <li><strong>FR 2.1:</strong> The system shall allow users to search for cars by location, pickup/drop-off dates, and pickup time.</li>
+      <li><strong>FR 2.2:</strong> The system shall filter results by vehicle class (SUV, Sedan, Hatchback), transmission (Automatic, Manual), and fuel type (Petrol, Diesel, Electric).</li>
+      <li><strong>FR 2.3:</strong> The system shall calculate the total rental cost, including taxes based on check-out dates.</li>
+    </ul>
+
+    <h3>2.1.3 FR 3: Hotel Booking Module</h3>
+    <ul>
+      <li><strong>FR 3.1:</strong> The system shall allow users to search for hotels by destination, check-in/out dates, and number of guests.</li>
+      <li><strong>FR 3.2:</strong> The system shall display verified ratings and detailed amenities checks (Pool, Gym, Spa, Beach Access).</li>
+      <li><strong>FR 3.3:</strong> The system shall display hotel-specific room types and calculate pricing.</li>
+    </ul>
+
+    <h3>2.1.4 FR 4: Flight Booking Module</h3>
+    <ul>
+      <li><strong>FR 4.1:</strong> The system shall search for flights based on origin, destination, dates, and seat class (Economy, Business, First Class).</li>
+      <li><strong>FR 4.2:</strong> The system shall display layover segments, airline codes, and real-time status (On Time, Delayed).</li>
+      <li><strong>FR 4.3:</strong> The system shall support real-time price tracking, triggering toast notifications upon price fluctuations.</li>
+    </ul>
+
+    <h3>2.1.5 FR 5: Transaction and Confirmation</h3>
+    <ul>
+      <li><strong>FR 5.1:</strong> The system shall process checkout transactions using saved token cards or new cards.</li>
+      <li><strong>FR 5.2:</strong> The system shall generate detailed booking confirmations containing dynamic unique receipt IDs.</li>
+      <li><strong>FR 5.3:</strong> The system shall provide a dashboard to print travel vouchers.</li>
+    </ul>
+    
+    <div class="page-break"></div>
+  </div>
+
+  <!-- PAGE 5: NON-FUNCTIONAL REQUIREMENTS & ARCHITECTURE -->
+  <div class="page">
+    <h2>2.2 Non-Functional Requirements (NFR)</h2>
+    <ul>
+      <li><strong>NFR 1: Performance:</strong> Search results must update instantly on the client side, maintaining transitions under 200ms.</li>
+      <li><strong>NFR 2: Security:</strong> Credentials and payment details must be stored securely using client-side sandboxed local storage to ensure no raw numbers are stored.</li>
+      <li><strong>NFR 3: Usability:</strong> Conforms to accessibility contrast guidelines, featuring a premium glassmorphic UI with CSS transitions and a dedicated printable print-sheet layout.</li>
+    </ul>
+
+    <h1>3. System Architecture and Design</h1>
+    <h2>3.1 Logical Architecture Model</h2>
+    <p>The Travel Rentals platform adopts a modern client-side MVC architecture, mapping logic and views into a decoupled Three-Tier Model (Presentation, Application Logic, Database Storage). This ensures modular development and local persistence.</p>
+    
+    <div class="diagram-container">
+      <div class="mermaid">
+        graph TD
+          A[Client Browser HTML5/CSS3] -->|Interaction Events| B[Logic Controllers: app.js, auth.js]
+          B -->|CRUD Actions| C[Mock DB Engine: db.js]
+          C -->|JSON Serialization| D[(LocalStorage DB)]
+      </div>
+    </div>
+
+    <h2>3.2 Technology Stack</h2>
+    <ul>
+      <li><strong>Presentation:</strong> Semantic HTML5 tags and CSS3 properties (Variables, Flexbox, Grids, and printing stylesheets).</li>
+      <li><strong>Logic:</strong> Vanilla JS ECMAScript 6+ modules.</li>
+      <li><strong>Database:</strong> Web Storage APIs (`localStorage` JSON tables).</li>
+    </ul>
+    
+    <div class="page-break"></div>
+  </div>
+
+  <!-- PAGE 6: DATABASE DESIGN -->
+  <div class="page">
+    <h1>4. Database Design and Data Modeling</h1>
+    <h2>4.1 Data Entities & ER Diagram</h2>
+    <p>Given the NoSQL nature of LocalStorage, document schemas are represented as JSON objects. The Entity-Relationship Diagram outlines the schema structures and relationships:</p>
+    
+    <div class="diagram-container">
+      <div class="mermaid">
+        erDiagram
+            USER ||--o{ BOOKING : places
+            USER ||--o{ CARD_TOKEN : stores
+            BOOKING ||--|| FLIGHT_RESERVATION : embeds
+            BOOKING ||--|| HOTEL_RESERVATION : embeds
+            BOOKING ||--|| CAR_RESERVATION : embeds
+            
+            USER {
+                string id
+                string name
+                string email
+                string passwordHash
+            }
+            CARD_TOKEN {
+                string id
+                string last4
+                string expiry
+                string token
+            }
+            BOOKING {
+                string bookingId
+                decimal totalPrice
+                string date
+            }
+      </div>
+    </div>
+    
+    <div class="page-break"></div>
+  </div>
+
+  <!-- PAGE 7: SCHEMAS -->
+  <div class="page">
+    <h2>4.2 Schema Structures</h2>
+    
+    <h3>4.2.1 User Record Schema</h3>
+    <pre>
+{
+  "id": "usr_1715694212",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "passwordHash": "john123",
+  "paymentCards": [
+    {
+      "id": "card_1715694300",
+      "cardHolder": "JOHN DOE",
+      "last4": "4444",
+      "expiry": "12/28",
+      "cardType": "Visa",
+      "token": "tok_visa_k8a2jd"
+    }
+  ]
+}
+    </pre>
+
+    <h3>4.2.2 Booking Record Schema</h3>
+    <pre>
+{
+  "bookingId": "TR-9J2KD9S7A",
+  "userId": "usr_1715694212",
+  "totalPrice": 14750,
+  "date": "04/06/2026",
+  "status": "Confirmed",
+  "flight": {
+    "airline": "IndiGo",
+    "code": "6E-105",
+    "from": "DEL",
+    "to": "BOM",
+    "price": 4500
+  },
+  "hotel": {
+    "name": "Resort De Goa & Spa",
+    "nights": 2,
+    "roomType": "Standard Room",
+    "price": 10250
+  }
+}
+    </pre>
+    
+    <div class="page-break"></div>
+  </div>
+
+  <!-- PAGE 8: USE CASE DIAGRAM -->
+  <div class="page">
+    <h1>5. Detailed System Diagrams (UML)</h1>
+    <h2>5.1 Use Case Diagram</h2>
+    <p>This diagram represents how travelers trigger search, profile updates, checkout, and invoice exports from the user interface.</p>
+    
+    <div class="diagram-container">
+      <div class="mermaid">
+        graph LR
+          Traveler((Traveler)) --> SearchFlight(Search Flights)
+          Traveler --> SearchHotel(Search Hotels)
+          Traveler --> SearchCar(Search Cars)
+          Traveler --> Login(Register/Login)
+          Traveler --> AddCart(Add Items to Cart)
+          Traveler --> Checkout(Checkout & Tokenize Card)
+          Traveler --> PrintVoucher(Print Invoice Voucher)
+      </div>
+    </div>
+    
+    <div class="page-break"></div>
+  </div>
+
+  <!-- PAGE 9: DATA FLOW DIAGRAM -->
+  <div class="page">
+    <h2>5.2 Data Flow Diagram (DFD Level 1)</h2>
+    <p>Decomposes the core transaction orchestration processes and shows how information flows between databases.</p>
+    
+    <div class="diagram-container">
+      <div class="mermaid">
+        graph LR
+          Traveler((Traveler)) -- 1. Search Query --> SearchProc[Search & Filter Process]
+          SearchProc -- Read --> InvDB[(Inventory DB)]
+          
+          Traveler -- 2. Authenticate --> AuthProc[User Management Process]
+          AuthProc -- Write --> UserDB[(Users DB)]
+          
+          Traveler -- 3. Pay & Checkout --> Transaction[Transaction Processor]
+          Transaction -- Read Cart --> Session[(Cart Session)]
+          Transaction -- Write --> Bookings[(Bookings DB)]
+          Transaction -- Return Voucher --> Traveler
+      </div>
+    </div>
+    
+    <div class="page-break"></div>
+  </div>
+
+  <!-- PAGE 10: SEQUENCE DIAGRAM -->
+  <div class="page">
+    <h2>5.3 Sequence Diagram: Booking Confirmation</h2>
+    <p>This sequence details how the platform handles booking validation, card authorization, LocalStorage table adjustments, and invoice generations sequentially.</p>
+    
+    <div class="diagram-container">
+      <div class="mermaid">
+        sequenceDiagram
+          actor Traveler
+          participant App as app.js
+          participant Auth as auth.js
+          participant DB as db.js
+          database LocalStorage
+
+          Traveler->>App: Click 'Pay & Confirm'
+          App->>Auth: Validate logged in user and Token card
+          Auth-->>App: Return User Card verification token
+          App->>DB: Send Booking payload
+          DB->>LocalStorage: Save booking record to 'tr_bookings' table
+          DB->>LocalStorage: Clear current cart 'tr_cart'
+          LocalStorage-->>DB: Save Success
+          DB-->>App: Return confirmed Booking ID
+          App-->>Traveler: Open Confirmation modal with Receipt details
+      </div>
+    </div>
+    
+    <div class="page-break"></div>
+  </div>
+
+  <!-- PAGE 11: IMPLEMENTATION & QA -->
+  <div class="page">
+    <h1>6. Implementation & Quality Assurance</h1>
+    <h2>6.1 Codebase File Architecture</h2>
+    <p>The project follows a clean directory structure containing dynamic HTML pages, shared script scripts, and CSS variable sheets:</p>
+    <ul>
+      <li><strong>`index.html`</strong>: Homepage with sliders and quick search widgets.</li>
+      <li><strong>`flights.html` / `hotels.html` / `cars.html`</strong>: Dedicated booking category search lists.</li>
+      <li><strong>`checkout.html`</strong>: Bundled cart overview and payment gateway simulator.</li>
+      <li><strong>`login.html` / `dashboard.html`</strong>: Auth profiles, credit tokens manager, and voucher exports.</li>
+      <li><strong>`css/style.css`</strong>: Variables layout stylesheets with a clean print layout format.</li>
+      <li><strong>`js/db.js` / `js/auth.js` / `js/app.js`</strong>: Local database, secure token manager, and orchestrator scripts.</li>
+    </ul>
+
+    <h2>6.2 UAT testing matrix</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Test Case</th>
+          <th>Tested Feature</th>
+          <th>Input Setup</th>
+          <th>Expected Outcome</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TC-01</td>
+          <td>User Creation</td>
+          <td>Fill register details</td>
+          <td>User saved in local database; logged in navbar</td>
+          <td>Passed</td>
+        </tr>
+        <tr>
+          <td>TC-02</td>
+          <td>Card Tokenization</td>
+          <td>Add card in settings</td>
+          <td>Generates token; card added to setting list</td>
+          <td>Passed</td>
+        </tr>
+        <tr>
+          <td>TC-03</td>
+          <td>Unified Invoice</td>
+          <td>Add flight and hotel</td>
+          <td>Calculates totals + 18% GST tax automatically</td>
+          <td>Passed</td>
+        </tr>
+        <tr>
+          <td>TC-04</td>
+          <td>Voucher Printing</td>
+          <td>Print voucher in dashboard</td>
+          <td>Hides UI panels; renders travel confirmation page</td>
+          <td>Passed</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>
